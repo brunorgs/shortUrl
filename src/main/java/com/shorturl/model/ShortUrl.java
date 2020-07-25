@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -15,6 +16,7 @@ public class ShortUrl {
     @Id
     private String id;
 
+    @Lob
     private String url;
 
     private ZonedDateTime date;

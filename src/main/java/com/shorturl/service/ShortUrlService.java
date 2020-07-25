@@ -17,16 +17,17 @@ public class ShortUrlService implements IShortUrlService {
     private ShortUrlRepository shortUrlRepository;
 
     @Override
-    public ShortUrlDto create(String url, ZonedDateTime date) {
+    public ShortUrlDto create(ShortUrl shortUrl) {
 
-        if(StringUtils.isEmpty(url)) {
+        if(StringUtils.isEmpty(shortUrl.getUrl())) {
             return null;
         }
 
-        ShortUrl shortUrl = new ShortUrl();
-        shortUrl.setDate(date);
-        shortUrl.setUrl(url);
         shortUrl.setId(RandomStringUtils.randomAlphanumeric(10));
+
+        if(shortUrl.getDate() == null) {
+            shortUrl.setDate(ZonedDateTime.now().plusYears(5));
+        }
 
         return toDto(shortUrlRepository.save(shortUrl));
     }
@@ -44,6 +45,16 @@ public class ShortUrlService implements IShortUrlService {
     }
 
     @Override
+    public ShortUrl toEntity(ShortUrlDto shortUrlDto) {
+
+        ShortUrl shortUrl = new ShortUrl();
+        shortUrl.setDate(shortUrlDto.getDate());
+        shortUrl.setUrl(shortUrlDto.getUrl());
+
+        return shortUrl;
+    }
+
+    @Override
     public String find(String id) {
 
         if(StringUtils.isEmpty(id)) {
@@ -53,6 +64,10 @@ public class ShortUrlService implements IShortUrlService {
         ShortUrl shortUrl = shortUrlRepository.findById(id).orElse(null);
 
         if(shortUrl == null) {
+            return null;
+        }
+
+        if(shortUrl.getDate().isBefore(ZonedDateTime.now())) {
             return null;
         }
 
