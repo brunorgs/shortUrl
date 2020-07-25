@@ -5,6 +5,7 @@ import com.shorturl.model.ShortUrl;
 import com.shorturl.repository.ShortUrlRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -15,6 +16,9 @@ public class ShortUrlService implements IShortUrlService {
 
     @Autowired
     private ShortUrlRepository shortUrlRepository;
+
+    @Value("${URL_BACKEND}")
+    private String urlBackend;
 
     @Override
     public ShortUrlDto create(ShortUrl shortUrl) {
@@ -36,7 +40,7 @@ public class ShortUrlService implements IShortUrlService {
 
         ShortUrlDto shortUrlDto = new ShortUrlDto();
 
-        String newUrl = String.join("/", "http://localhost:8080", shortUrl.getId());
+        String newUrl = String.join("/", urlBackend, shortUrl.getId());
 
         shortUrlDto.setUrl(newUrl);
         shortUrlDto.setDate(shortUrl.getDate());
