@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 @RequestMapping("/")
@@ -17,8 +17,8 @@ public class RedirectController {
 
 
     @GetMapping("{id}")
-    public ModelAndView redirect(@PathVariable("id") String id) {
+    public RedirectView redirect(@PathVariable("id") String id) {
         String url = shortUrlService.find(id);
-        return new ModelAndView("redirect: " + url);
+        return new RedirectView(url);
     }
 }

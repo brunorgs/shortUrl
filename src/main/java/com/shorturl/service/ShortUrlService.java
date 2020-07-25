@@ -35,7 +35,7 @@ public class ShortUrlService implements IShortUrlService {
 
         ShortUrlDto shortUrlDto = new ShortUrlDto();
 
-        String newUrl = String.join("/", "localhost:8080", shortUrl.getId());
+        String newUrl = String.join("/", "http://localhost:8080", shortUrl.getId());
 
         shortUrlDto.setUrl(newUrl);
         shortUrlDto.setDate(shortUrl.getDate());

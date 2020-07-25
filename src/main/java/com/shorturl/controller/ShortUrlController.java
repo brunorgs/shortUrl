@@ -19,7 +19,7 @@ public class ShortUrlController {
     private IShortUrlService shortUrlService;
 
     @PostMapping("/")
-    public ResponseEntity<Object> createShortLink(@RequestParam("url") String url, @RequestParam("date") ZonedDateTime date) {
+    public ResponseEntity<Object> createShortLink(@RequestParam("url") String url, @RequestParam(value = "date", required = false) ZonedDateTime date) {
         return new ResponseEntity<>(shortUrlService.create(url, date), HttpStatus.CREATED);
     }
 }
