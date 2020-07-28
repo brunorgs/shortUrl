@@ -6,8 +6,10 @@ import com.shorturl.repository.ShortUrlRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.ZonedDateTime;
 
@@ -24,14 +26,18 @@ public class ShortUrlService implements IShortUrlService {
     public ShortUrlDto create(ShortUrl shortUrl) {
 
         if(StringUtils.isEmpty(shortUrl.getUrl())) {
-            return null;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Url is null or empty");
         }
-
-        shortUrl.setId(RandomStringUtils.randomAlphanumeric(10));
 
         if(shortUrl.getDate() == null) {
             shortUrl.setDate(ZonedDateTime.now().plusYears(5));
         }
+
+        if(shortUrl.getDate().isBefore(ZonedDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Date");
+        }
+
+        shortUrl.setId(RandomStringUtils.randomAlphanumeric(10));
 
         return toDto(shortUrlRepository.save(shortUrl));
     }
@@ -62,17 +68,17 @@ public class ShortUrlService implements IShortUrlService {
     public String find(String id) {
 
         if(StringUtils.isEmpty(id)) {
-            return null;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id is null");
         }
 
         ShortUrl shortUrl = shortUrlRepository.findById(id).orElse(null);
 
         if(shortUrl == null) {
-            return null;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Url does not exists");
         }
 
         if(shortUrl.getDate().isBefore(ZonedDateTime.now())) {
-            return null;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Link expired");
         }
 
         return shortUrl.getUrl();
